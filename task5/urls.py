@@ -16,6 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from webapp.views import home
 
 urls_app = [
     path('calculate/', include('calculate_api.urls'))
@@ -23,5 +24,6 @@ urls_app = [
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include(urls_app))
+    path('api/', include(urls_app)),
+    path('', home, name='home')
 ]

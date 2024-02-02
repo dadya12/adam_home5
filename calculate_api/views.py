@@ -5,7 +5,6 @@ from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 
 
-@csrf_exempt
 def calculated(request, tranzaction):
     if request.method == "POST":
         try:
@@ -25,8 +24,8 @@ def calculated(request, tranzaction):
             else:
                 return JsonResponse({'error': 'Что то пошло не так'}, status=400)
             return JsonResponse({'answer': finish})
-        except (ValueError, KeyError):
-            return JsonResponse({'error': 'Неверный тип данных'}, status=400)
+        except ValueError:
+            return JsonResponse({'error': 'Value Error'}, status=400)
         except ZeroDivisionError:
             return JsonResponse({"error": "Division by zero"}, status=400)
 

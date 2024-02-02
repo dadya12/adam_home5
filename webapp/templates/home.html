@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<div class="center">
+<form class="container">
+    <h1>Basic Calculator</h1>
+    <input type="text" id="first" placeholder="Enter first number">
+    <br>
+    <br> 
+    <input type="text" id="second" placeholder="Enter second number">
+    <br>
+    <br>
+    <div>
+        <a href="{% url 'calculate_api:add' %}" class="btn" style="text-decoration: none; margin-right: 10px; color: darkgreen">Add</a>
+        <a href="{% url 'calculate_api:subtract' %}" class="btn" style="text-decoration: none; margin-right: 10px; color: black">Subtract</a>
+        <a href="{% url 'calculate_api:multiply' %}" class="btn" style="text-decoration: none; margin-right: 10px; color: red">Multiply</a>
+        <a href="{% url 'calculate_api:divide' %}" class="btn" style="text-decoration: none; color: darkmagenta">Divide</a>
+    </div>
+    <br>
+    <br>
+    <div id="finish"></div>
+    
+<style>
+  .center {
+    margin: auto;
+    width: 60%;
+    border: 3px solid #a5addb;
+    padding: 10px;
+  }
+  .container{
+      text-align: center;
+  }
+</style>
+</form>
+</div>
+
+<script>
+    async function makeRequest(url, method = 'GET', data) {
+        let response = await fetch(url, {
+            method,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        });
+
+        if (response.ok) {
+            return await response.json();
+        } else {
+            let error = new Error(response.statusText);
+            error.response = response;
+            throw error;
+        }
+    }
+
+    async function onClick(e) {
+        e.preventDefault();
+
+        const first = document.getElementById('first').value;
+        const second = document.getElementById('second').value;
+
+        let a = e.target;
+        let url = a.getAttribute('href');
+
+        try {
+            let response = await makeRequest(url, 'POST', {A: first, B: second});
+            let resultElement = document.getElementById('finish');
+            resultElement.innerText = `Finish: ${response.answer}`;
+            resultElement.style.color = 'green';
+        } catch (error) {
+            console.error('Error:', error);
+
+            let resultElement = document.getElementById('finish');
+            resultElement.innerText = `Error: ${error.response ? error.response.statusText : 'Unknown error'}`;
+            resultElement.style.color = 'red';
+        }
+    }
+
+    function onLoad() {
+        let operations = document.getElementsByClassName('btn');
+        for (let i = 0; i < operations.length; i++) {
+            operations[i].addEventListener('click', onClick);
+        }
+    }
+
+    window.addEventListener('load', onLoad);
+</script>
+
+</body>
+</html>
